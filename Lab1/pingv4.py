@@ -28,5 +28,5 @@ if len(sys.argv) != 2:
     print("Uso: sudo python3 pingv4.py <texto_cifrado>")
     sys.exit(1)
 texto_cifrado = sys.argv[1]
-destination = "10.31.16.208"  # Usamos el DNS de Google como ejemplo
+destination = "64.233.190.101"  # Usamos el DNS de Google como ejemplo
 send_ping_with_hidden_data(destination, texto_cifrado)
