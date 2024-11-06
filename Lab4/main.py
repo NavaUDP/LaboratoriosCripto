@@ -1,4 +1,4 @@
-from algoritmos import alg_aes_256, alg_des
+from algoritmos import alg_aes_256, alg_des, alg_3des
 
 #Solicitar los datos al usuario
 print("Indique el algoritmo a utilizar: ")
@@ -12,5 +12,7 @@ if algoritmo == "1":
     alg_des()
 elif algoritmo == "2":
     alg_aes_256()
+elif algoritmo == "3":
+    alg_3des()
 
 
