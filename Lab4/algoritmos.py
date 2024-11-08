@@ -3,12 +3,11 @@ from Crypto.Cipher import DES
 from Crypto.Cipher import AES
 from Crypto.Cipher import DES3
 from Crypto.Random import get_random_bytes
-from Crypto.Util.Padding import pad
+from Crypto.Util.Padding import pad, unpad
 
 
-def alg_des():
+def alg_des(key, vector, text):
     #Para que el algoritmo funcione, todas las variables deben tener 8 caracteres
-    key = input("Ingrese la clave a utilizar: ")
     if len(key) == 8:
         key_bytes = key.encode('utf-8')
     elif len(key) < 8:
@@ -24,7 +23,6 @@ def alg_des():
 
         print("clave modificada: ", key_bytes)
 
-    vector = input("Ingrese el vector de inicializacion (IV): ")
     if len(vector) == 8:
         vector_bytes = vector.encode('utf-8')
     elif len(vector) < 8:
@@ -40,7 +38,6 @@ def alg_des():
 
         print("vector de inicializacion modificado: ", vector_bytes)  
     
-    text = input("Ingrese el texto a cifrar, debe tener como minimo 8 caracteres: ")
     text_bytes = text.encode('utf-8')
     if len(text) % 8 != 0:
         padded_text = pad(text_bytes,DES.block_size)
@@ -53,6 +50,8 @@ def alg_des():
     ciphertext_base64 = base64.b64encode(ciphertext)
     print("Texto antes del cifrado: ", text_bytes)
     print("Texto cifrado con DES: ", ciphertext_base64)
+
+    return ciphertext
 
 def alg_aes_256():
     key = input("Ingrese la clave a utilizar: ")
@@ -101,6 +100,8 @@ def alg_aes_256():
     print("Texto antes del cifrado: ", text_bytes)
     print("Texto cifrado con AES: ", ciphertext_base64)
 
+    return ciphertext
+
 def alg_3des():
         #Para que el algoritmo funcione, todas las variables deben tener 8 caracteres
     key = input("Ingrese la clave a utilizar: ")
@@ -147,3 +148,36 @@ def alg_3des():
     ciphertext_base64 = base64.b64encode(ciphertext)
     print("Texto antes del cifrado: ", text_bytes)
     print("Texto cifrado con 3DES: ", ciphertext_base64)
+
+    return ciphertext
+
+def alg_des_decipher(key, vector, ciphertext):
+    #Suponemos que la llave siempre va a ser correcta, al igual que el vector, por lo que solo invocamos al algoritmo
+    #de igual manera hay que pasar el vector y la key a bytes
+    if len(key) == 8:
+        key_bytes = key.encode('utf-8')
+    elif len(key) < 8:
+        #Generar el resto de bytes para la clave
+        key_bytes = key.encode('utf-8')
+        extra_bytes = get_random_bytes(8 - len(key_bytes))
+        key_bytes += extra_bytes
+
+    elif len(key) > 8:
+        key_bytes = key[:8].encode('utf-8')
+
+    if len(vector) == 8:
+        vector_bytes = vector.encode('utf-8')
+    elif len(vector) < 8:
+        #Generar el resto de bytes para el vector
+        vector_bytes = vector.encode('utf-8')
+        extra_bytes = get_random_bytes(8 - len(vector_bytes))
+        vector_bytes += extra_bytes
+
+    elif len(vector) > 8:
+        vector_bytes = vector[:8].encode('utf-8')  
+
+    decipher = DES.new(key_bytes, DES.MODE_CBC, vector_bytes)
+    padded_text = decipher.decrypt(ciphertext)
+    text_bytes = unpad(padded_text, DES.block_size)
+    text = text_bytes.decode('utf-8')
+    print("Texto descifrado con DES: ", text)
