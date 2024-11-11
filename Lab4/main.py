@@ -1,41 +1,42 @@
 from algoritmos import alg_aes_256, alg_des, alg_3des, alg_des_decipher, alg_aes_decipher, alg_3des_decipher
 
 #Solicitar los datos al usuario
-print("Indique el algoritmo a utilizar: ")
-print("1. DES")
-print("2. AES")
-print("3. 3DES")
-
-algoritmo = input("-> ")
+print("Bienvenido, ingrese los siguientes datos:")
 
 key = input("Ingrese la clave a utilizar: ")
 vector = input("Ingrese el vector de inicializacion (IV): ")
 text = input("Ingrese el texto a cifrar: ")
 
-if algoritmo == "1":
-    texto_cifrado_des = alg_des(key, vector, text)
-    cifrado = input("Pulse enter para descifrar el mensaje.")
+cifrado = True
 
-    if cifrado is None:
-        alg_des_decipher(key, vector, texto_cifrado_des)
+while cifrado == True:
+    #Algoritmo DES
+    print("Cifrado DES")
+    ciphertext = alg_des(key, vector, text)
+    descifrado = input("Desea descifrar el texto cifrado con DES? (1.- Si/2.- No): ")
+
+    if descifrado == "1":
+        alg_des_decipher(key, vector, ciphertext)
     else: 
-        alg_des_decipher(key, vector, texto_cifrado_des)
-elif algoritmo == "2":
-    texto_cifrado_aes = alg_aes_256(key, vector, text)
-    cifrado = input("Pulse enter para descifrar el mensaje.")
+        print("Continua al cifrado AES...")
+    
+    print("Cifrado AES-256: ")
+    ciphertext = alg_aes_256(key, vector, text)
+    descifrado = input("Desea descifrar el texto cifrado con AES-256? (1.- Si/2.- No): ")
 
-    if cifrado is None:
-        alg_aes_decipher(key, vector, texto_cifrado_aes)
-    else: 
-        alg_aes_decipher(key, vector, texto_cifrado_aes)
+    if descifrado == "1":
+        alg_aes_decipher(key, vector, ciphertext)
+    else:
+        print("Continua al cifrado 3DES...")
 
-elif algoritmo == "3":
-    texto_cifrado_3des = alg_des(key, vector, text)
-    cifrado = input("Pulse enter para descifrar el mensaje.")
+    print("Cifrado 3DES: ")
+    ciphertext = alg_3des(key, vector, text)
+    descifrado = input("Desea descifrar el texto cifrado con 3DES? (1.- Si/2.- No): ")
 
-    if cifrado is None:
-        alg_3des_decipher(key, vector, texto_cifrado_3des)
-    else: 
-        alg_3des_decipher(key, vector, texto_cifrado_3des)
+    if descifrado == "1":
+        alg_3des_decipher(key, vector, ciphertext)
+    else:
+        break
 
+    cifrado = False
 
