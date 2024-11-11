@@ -1,11 +1,9 @@
 import base64
-import secrets
-import string
 from Crypto.Cipher import DES
 from Crypto.Cipher import AES
 from Crypto.Cipher import DES3
 from Crypto.Random import get_random_bytes
-from Crypto.Util.Padding import pad, unpad
+from Crypto.Util.Padding import pad
 from decipher import des_decipher, aes_decipher, des3_decipher
 
 def des(key, iv, msg):
