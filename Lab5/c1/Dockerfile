@@ -1,0 +1,13 @@
+# C1: Ubuntu 16.10
+FROM ubuntu:16.10
+
+#Cambiar los repositorios a los archivados
+RUN sed -i 's/archive.ubuntu.com/old-releases.ubuntu.com/g' /etc/apt/sources.list && \
+    sed -i 's/security.ubuntu.com/old-releases.ubuntu.com/g' /etc/apt/sources.list
+
+# Actualizar paquetes y configurar OpenSSH
+RUN apt-get update && \
+    apt-get install -y openssh-client && \
+    apt-get clean
+
+CMD ["/bin/bash"]
